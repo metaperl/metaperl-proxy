@@ -18,7 +18,6 @@ def full_path(*extra):
     return os.path.join(os.path.dirname(__file__), *extra)
 sys.path.insert(0, full_path())
 
-
 import db
 
 logging.basicConfig()
