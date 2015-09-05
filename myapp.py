@@ -10,8 +10,8 @@ import StringIO
 
 ## 3rd party
 import cherrypy
-sys.path.insert(0, "/home/schemelab/prg/meld3")
-import meld3
+import requests
+
 
 ## local
 def full_path(*extra):
@@ -22,9 +22,18 @@ import db
 
 logging.basicConfig()
 
+sorry = 'This is only for US Citizens. Sorry and thank you for your time.'
+
 class Root(object):
 
     @cherrypy.expose
     def index(self, tag):
-        url = db.urls[tag]
-        raise cherrypy.HTTPRedirect("http://www.duckduckgo.com")
+        redirect_url = db.urls[tag]
+        ip = cherrypy.request.headers['Remote-Addr']
+        request_url = 'http://ipinfo.io/{0}/country'.format(ip)
+        r = requests.get(request_url)
+        country = r.text.strip()
+        if country == 'US':
+            raise cherrypy.HTTPRedirect(redirect_url)
+        else:
+            return sorry
